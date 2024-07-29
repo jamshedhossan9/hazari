@@ -230,7 +230,7 @@ $(function(){
             };
 
             /*
-                these methods are used to manage cards sets 
+                these methods are used to manage card sets 
             */
             var cardSerialize = function(cards){
                 let str = [];
@@ -399,7 +399,7 @@ $(function(){
             }
 
             /*
-                these methods to show cards properly in UI
+                these methods are used to show cards properly in UI
             */
             var setCardIntoTable = function(no, blank){
                 no = no ?? 0;
