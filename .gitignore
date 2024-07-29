@@ -1,0 +1,11 @@
+.env
+.env.backup
+.DS_Store
+.idea
+.idea/*
+/.github
+/.vscode
+/.idea/
+/assets/jquery-ui/themes
+/assets/custom-backup.css
+/assets/custom-backup.js
