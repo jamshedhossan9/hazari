@@ -166,7 +166,7 @@ $(function(){
             reviewPreviousRound = false,
             frequency = .05, 
             serverInterval = frequency * 15, 
-            waitAfterSubRound = frequency * 40, 
+            waitAfterSubRound = frequency * 60, 
             waitAfterRound = frequency * 10; // seconds
 
         var setResult = function(){
