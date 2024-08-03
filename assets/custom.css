@@ -89,7 +89,7 @@ body{
     background: url(icons/bg.svg), radial-gradient(circle, rgb(181 192 233) 0%, rgba(68, 61, 86, 1) 100%);
     background-repeat: repeat, no-repeat;
     background-position: 0 0;
-    background-size: var(--bg-size) var(--bg-size), cover;
+    background-size: var(--bg-size) var(--bg-size), auto;
 }
 .d-none{
     display: none;
