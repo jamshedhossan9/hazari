@@ -9,8 +9,8 @@ In July 2024, the government of my country made a complete internet shutdown thr
     <img src="https://github.com/jamshedhossan9/hazari/blob/main/screenshots/a2.png?raw=true" width="600" >
 </p>
 <p align="center">
-    <img src="https://github.com/jamshedhossan9/hazari/blob/main/screenshots/b3.png?raw=true" width="600" >
+    <img src="https://github.com/jamshedhossan9/hazari/blob/main/screenshots/b2.png?raw=true" width="600" >
 </p>
 <p align="center">
-    <img src="https://github.com/jamshedhossan9/hazari/blob/main/screenshots/c3.png?raw=true" width="600" >
+    <img src="https://github.com/jamshedhossan9/hazari/blob/main/screenshots/c2.png?raw=true" width="600" >
 </p>
