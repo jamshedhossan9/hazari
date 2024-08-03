@@ -618,9 +618,6 @@ $(function(){
                 }
                 table = area.find('.player-area-table');
                 if(table.length){
-                    if(no > 0){
-                        table.attr('data-empty', 'true');
-                    }
                     let wrapper = area.closest('.player-area');
                     let cells = ``;
                     let i = 0;
@@ -628,7 +625,7 @@ $(function(){
                         let _number = item.number == 'W' ? '10' : item.number;
                         if(blank){
                             //  data-symbol="${item.number}${item.type}"
-                            cells += `<div class="player-area-table-cell">
+                            cells += `<div class="player-area-table-cell" data-no="${i}">
                                 <div class="player-area-table-card-wrapper">
                                     <div class="cardback">
                                         <div class="cardback-child">
@@ -649,7 +646,11 @@ $(function(){
                             </div>`;
                         }
                         else {
-                            cells += `<div class="player-area-table-cell" data-no="${i}" data-card-type="${item.type}" data-card-number="${item.number}" data-card-weight="${item.weight}">
+                            let existingCell = [];
+                            if(no > 0){
+                                existingCell = table.find(`.player-area-table-cell[data-no="${i}"]`);
+                            }
+                            let temp = `<div class="player-area-table-cell" data-no="${i}" data-card-type="${item.type}" data-card-number="${item.number}" data-card-weight="${item.weight}">
                                         <div class="player-area-table-card-wrapper">
                                             <div class="cardback">
                                                 <div class="cardback-child">
@@ -665,10 +666,29 @@ $(function(){
                                             </div>
                                         </div>
                                     </div>`;
+                            if(existingCell.length){
+                                existingCell.attr('data-card-type', item.type);
+                                existingCell.attr('data-card-number', item.number);
+                                existingCell.attr('data-card-weight', item.weight);
+                                // existingCell.find('.player-area-table-card-holder').remove();
+                                existingCell.find(`.player-area-table-card-holder`).replaceWith(`
+                                        <div class="player-area-table-card-holder" data-card-type="${item.type}" data-card-number="${item.number}" data-card-weight="${item.weight}">
+                                            <span class="number number-top">${_number}</span>
+                                            <span class="number number-bottom">${_number}</span>
+                                            <span class="type">${typeIcons[item.type]}</span>
+                                            <span class="type type-2">${typeIcons[item.type]}</span>
+                                            <span class="type type-3">${typeIcons[item.type]}</span>
+                                        </div>
+                                    `);
+
+                            }
+                            else{
+                                cells += temp;
+                            }
                         }
                         i++;
                     }
-                    table.html(cells);
+                    table.append(cells);
                     setCardPositions(no);
 
                     if(no == 0 && !madeSortable){
@@ -696,9 +716,6 @@ $(function(){
                         
                     }
                     
-                    setTimeout(() => {
-                        table.attr('data-empty', blank ? 'true' : 'false');
-                    }, serverInterval);
                 }
             }
 
