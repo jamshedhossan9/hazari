@@ -1,4 +1,35 @@
 $(function(){
+    var madeSortable = false;
+    var heartIcon = `<svg class="svg-icon" height="800px" width="800px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512.001 512.001" xml:space="preserve">
+            <g>
+                <g>
+                    <path style="fill:currentColor" d="M368.459,20.727c-44.919,0-85.82,20.784-112.458,54.367c-26.583-33.509-67.448-54.367-112.459-54.367
+                        C64.392,20.727,0,85.119,0,164.267c0,91.398,58.04,172.206,124.794,234.054c60.426,55.986,120.038,89.32,122.546,90.711
+                        c2.693,1.495,5.677,2.242,8.661,2.242c2.983,0,5.968-0.747,8.661-2.242c2.508-1.391,62.121-34.727,122.546-90.711
+                        c66.784-61.878,124.793-142.68,124.793-234.054C512,85.119,447.608,20.727,368.459,20.727z"/>
+                </g>
+            </g>
+        </svg>`;
+    var diamondIcon = `<svg class="svg-icon" width="800px" height="800px" viewBox="0 -0.5 17 17" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+            <title>821</title>
+            <defs></defs>
+            <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                <path style="fill:currentColor" d="M7.92950166,15.644 L3.34050166,8.796 C2.88750166,8.342 2.88650166,7.608 3.33750166,7.155 L7.90350166,0.323 C8.35450166,-0.13 9.08950166,-0.128 9.54550166,0.325 L14.0865017,7.175 C14.5405017,7.628 14.5415017,8.363 14.0895017,8.816 L9.57150166,15.646 C9.57150166,15.646 8.38450166,16.097 7.92950166,15.644 Z" class="si-glyph-fill"></path>
+            </g>
+        </svg>`;
+    var clubIcon = `<svg class="svg-icon" width="800px" height="800px" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" preserveAspectRatio="xMidYMid meet">
+            <path style="fill:currentColor" d="M25.5 28a7.5 7.5 0 0 0 7.5-7.5a7.5 7.5 0 0 0-7.5-7.5a7.45 7.45 0 0 0-3.73 1h-.21a6.972 6.972 0 0 0 3.423-6a6.983 6.983 0 1 0-13.967 0a6.972 6.972 0 0 0 3.423 6h-.208c-1.1-.633-2.371-1-3.731-1a7.5 7.5 0 0 0 0 15a7.476 7.476 0 0 0 5.46-2.368C15.549 29.753 11.205 33 7 33h.5a1.5 1.5 0 1 0 0 3h21a1.5 1.5 0 0 0 0-3h.5c-4.205 0-8.549-3.248-8.959-7.369A7.47 7.47 0 0 0 25.5 28z"></path>
+        </svg>`;
+    var spadeIcon = `<svg class="svg-icon" height="800px" width="800px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 57.938 57.938" xml:space="preserve">
+            <g>
+                <path style="fill:currentColor" d="M54.822,24.938C51.086,18.334,43.441,8.828,29.154,0.051c-0.112-0.069-0.258-0.069-0.369,0
+                    C14.5,8.828,6.853,18.045,3.116,24.649c-4.395,7.767-1.889,17.151,6.104,21.119c2.084,1.034,3.599,1.17,5.396,1.17
+                    c0,0,0.44-0.015,1.164-0.123c3.212-0.48,6.165-2.041,8.45-4.349l0.325-0.328c0.475-0.48,1.29-0.103,1.227,0.57
+                    c-0.339,3.645-0.998,9.113-3.787,12.591c-0.855,1.066-0.155,2.64,1.212,2.64h11.534c1.363,0,2.058-1.57,1.204-2.633
+                    c-2.824-3.516-3.462-9.069-3.807-12.715c-0.054-0.569,0.648-0.876,1.033-0.453l0,0c1.992,2.194,4.562,3.806,7.428,4.56
+                    c1.595,0.42,2.721,0.53,2.721,0.53c1.797,0,3.313-0.136,5.396-1.17C56.711,42.089,59.217,32.705,54.822,24.938z"/>
+            </g>
+        </svg>`;
     var showModal = function(el){
         el = $(el);
         if(el.length){
@@ -41,7 +72,7 @@ $(function(){
         return JSON.parse(JSON.stringify(obj ?? null));
     };
 
-    var positionSubmittedTableCards = function(){
+    var positionSubmittedTableCards_old = function(){
         let players = [0,1,2,3];
         let centerTable = $('.submit-table');
         let centerArea = centerTable.get(0).getBoundingClientRect();
@@ -82,7 +113,7 @@ $(function(){
             else{
                 let lefts = [];
                 let top = 0;
-                top = ((centerArea.top - playerTableArea.top) + (centerArea.width/2) - (cardHeight/2)) * (1);
+                top = ((centerArea.top - playerTableArea.top) + (centerArea.height/2) - (cardHeight/2)) * (1);
                 if(cards.length == 3){
                     lefts = [0,0,0];
                     if(player == 1){
@@ -121,6 +152,54 @@ $(function(){
         }
     };
 
+    var positionSubmittedTableCards = function(){
+        let players = [0,1,2,3];
+        let centerTable = $('.submit-table');
+        let centerArea = centerTable.get(0).getBoundingClientRect();
+        for(let player of players){
+            let playerTable = $(`.player-area[data-no="${player}"] .player-area-table`);
+            let cardPosition = $(`.submit-table .card-set-${player} .card-2`).get(0).getBoundingClientRect();
+            let cards = $(`.player-area[data-no="${player}"] .player-area-table-cell.turn-to-board:not(.withdrawn-from-board):not(.returned-to-winner)`);
+            let cardWidth = cards.first().width();
+            let cardHeight = cards.first().height();
+            let playerTableArea = playerTable.get(0).getBoundingClientRect();
+            // let _transform = [
+            //     `translateX(calc(var(--card-width) * -0.8)) translateY(calc(var(--card-height) * .07)) rotate(-25deg)`,
+            //     `translateX(calc(var(--card-width) * -0.4)) translateY(calc(var(--card-height) * .01)) rotate(-10deg)`,
+            //     `translateX(0) translateY(0) rotate(0deg)`,
+            //     `translateX(calc(var(--card-width) * 0.4)) translateY(calc(var(--card-height) * .01)) rotate(10deg)`,
+            // ];
+            let _transform = [
+                `translateX(calc(var(--card-width) * -0.8)) translateY(calc(var(--card-height) * .15)) rotate(-17deg)`,
+                `translateX(calc(var(--card-width) * -0.4)) translateY(calc(var(--card-height) * .04)) rotate(-5deg)`,
+                `translateX(0) translateY(0) rotate(0deg)`,
+                `translateX(calc(var(--card-width) * 0.4)) translateY(calc(var(--card-height) * 0)) rotate(5deg)`,
+            ];
+            let transform = [];
+            if(cards.length == 3){
+                transform[0] = _transform[1];
+                transform[1] = _transform[2];
+                transform[2] = _transform[3];
+                
+            }
+            if(cards.length == 4){
+                transform[0] = _transform[0];
+                transform[1] = _transform[1];
+                transform[2] = _transform[2];
+                transform[3] = _transform[3];
+            }
+            let top = 0, left = 0;
+            top = cardPosition.top - playerTableArea.top, left = cardPosition.left - playerTableArea.left;
+            let zIndex = 5;
+            cards.each(function(i){
+                let el = $(this);
+                let serial = _parseInt(el.attr('data-card-serial'));
+                el.addClass('turned-to-board').css({left:`${left}px`, top:`${top}px`, 'z-index': serial + 1, transform: transform[serial]});
+            });
+            
+        }
+    };
+
     var positionWonTableCards = function(){
         let cards = $(`.player-area-table-cell.return-to-winner:not(.returned-to-winner)`);
         cards.each(function(){
@@ -150,8 +229,127 @@ $(function(){
                 top = (fromArea.top - (toArea.top + (toArea.height/2)) - (cardHeight/2) + cardHeight) * (-1);
                 left = ((toArea.left + (toArea.width/2) - fromArea.left) - (cardWidth/2));
             }
-            el.addClass('returned-to-winner').css({left: `${left}px`, top: `${top}px`});
+            el.addClass('returned-to-winner').css({left: `${left}px`, top: `${top}px`, transform: `translateX(0) translateY(0) rotate(0deg)`});
         });
+    };
+
+    var positionPlayerAreaTable = function(){
+        return;
+        // setTimeout(() => {
+            // $('body').addClass('no-transition');
+            var tables = $('.player-area .player-area-table');
+            tables.each(function(){
+                let el = $(this);
+                let area = el.closest('.player-area');
+                let no = _parseInt(area.attr('data-no'))
+                // console.log(area.get(0).className)
+                if(area.hasClass('vertical-list')){
+                    let lastCard = el.find('.player-area-table-cell:last-child');
+                    if(lastCard.length){
+                        let tableArea = el.get(0).getBoundingClientRect();
+                        let lastCardArea = lastCard.get(0).getBoundingClientRect();
+                        let margin = (tableArea.bottom - lastCardArea.bottom) / 1;
+                        // console.log('top', tableArea.bottom - lastCardArea.bottom)
+                        el.css({'margin-top': `${margin}px`});
+                    }
+                }
+                else{
+                    let lastCard = el.find('.player-area-table-cell:last-child');
+                    if(lastCard.length){
+                        let tableArea = el.get(0).getBoundingClientRect();
+                        let lastCardArea = lastCard.get(0).getBoundingClientRect();
+                        let margin = (tableArea.right - lastCardArea.right) / 1;
+                        // console.log('left', tableArea.right - lastCardArea.right)
+                        el.css({'margin-left': `${margin}px`});
+                    }
+                }
+                if(no == 0 && !madeSortable){
+                    madeSortable = true;
+                    let axis = 'x';
+                    // el.sortable({
+                    //     axis: axis,
+                    //     containment: '#app',
+                    //     create: function(e, ui){
+                    //         positionPlayerAreaTable();
+                    //     },
+                    //     start: function(e, ui){
+                    //         ui.item.addClass('sorting-element');
+                    //         setCardPositions(no)
+                    //     },
+                    //     sort: function(e, ui){
+                    //         setCardPositions(no)
+                    //     },
+                    //     stop: function(e, ui){
+                    //         let leftInPercent = (ui.position.left / ui.item.parent().width()) * 100;
+                    //         ui.item.css({left:`${leftInPercent}%`})
+                    //         setTimeout(function(){
+                    //             ui.item.removeClass('sorting-element');
+                    //             setCardPositions(no, true)
+                    //         }, 100)
+                    //     },
+                    // });
+                    
+                }
+            });
+            // $('body').removeClass('no-transition');
+        // }, 0);
+        positionSubmitTable();
+    };
+
+    var setCardPositions = function(no){
+        no = no ?? 0;
+        setTimeout(function(){
+            let area = $('.player-area[data-no="'+no+'"] .player-area-table-wrapper .player-area-table');
+            if(area.length){
+                let wrapper = area.closest('.player-area');
+                let lefts = [0], tops = [0];
+                if(wrapper.hasClass('vertical-list')){
+                    let lastTop =  ((area.height() - area.find('.player-area-table-cell:first-child').height()) / area.height()) * 100;
+                    let chunk = lastTop / 12;
+                    for(let i = 1; i <= 11; i++){
+                        tops.push(i * chunk);
+                    }
+                    tops.push(lastTop);
+                }
+                else{
+                    let lastLeft =  ((area.width() - area.find('.player-area-table-cell:first-child').width()) / area.width()) * 100;
+                    let chunk = lastLeft / 12;
+                    for(let i = 1; i <= 11; i++){
+                        lefts.push(i * chunk);
+                    }
+                    lefts.push(lastLeft);
+                }
+                var left = 0;
+                var width = 100 / 13;
+                area.find('>.player-area-table-cell:not(.ui-sortable-helper)').each(function(i){
+                    let el = $(this);
+                    if(wrapper.hasClass('vertical-list')){
+                        let negativeTop =  0;
+                        el.css({top:`${tops[i]}%`, left:`0px`});
+                    }
+                    else{
+                        el.css({ top:`0px`, left:`${lefts[i]}%`});
+                    }
+                    left += width;
+                })
+            }
+        }, 0);
+    };
+
+    var setAllCardPositions = function(){
+        setCardPositions(0);
+        setCardPositions(1);
+        setCardPositions(2);
+        setCardPositions(3);
+    };
+
+    var positionSubmitTable = function(){
+        let player0 = $('.player-area[data-no="0"] .identity').get(0).getBoundingClientRect();
+        let player1 = $('.player-area[data-no="1"] .identity').get(0).getBoundingClientRect();
+        let player2 = $('.player-area[data-no="2"] .identity').get(0).getBoundingClientRect();
+        let player3 = $('.player-area[data-no="3"] .identity').get(0).getBoundingClientRect();
+        let height = player0.top - player2.bottom, width = player3.left - player1.right;
+        $('.submit-table').css({width:`${width}px`, height:`${height}px`});
     };
 
     var gameNumber = 0;
@@ -215,6 +413,12 @@ $(function(){
                 reviewCardsAll = {},
                 cardNumbers = `A-K-Q-J-W-9-8-7-6-5-4-3-2`.split('-'),
                 cardTypes = 'H-S-D-C'.split('-'), // heart, spades, diamond, club
+                typeIcons = {
+                    'H': heartIcon,
+                    'S': spadeIcon,
+                    'D': diamondIcon,
+                    'C': clubIcon
+                },
                 typeWeights = {},
                 numberWeights = {},
                 playingCards = [];
@@ -228,6 +432,7 @@ $(function(){
                 high: 1,
                 rest: 0,
             };
+            madeSortable = false;
 
             /*
                 these methods are used to manage card sets 
@@ -404,6 +609,7 @@ $(function(){
             var setCardIntoTable = function(no, blank){
                 no = no ?? 0;
                 blank = blank ?? false;
+                // blank = false;
                 cards = currentPlayingCards[no];
                 let area = $('.player-area[data-no="'+no+'"] .player-area-table-wrapper');
                 let table = area.find('.player-area-table');
@@ -426,28 +632,17 @@ $(function(){
                                 <div class="player-area-table-card-wrapper">
                                     <div class="cardback">
                                         <div class="cardback-child">
+                                            <img class="card-back-svg" src="assets/icons/card-back.svg"/>
                                         </div>
                                     </div>
                                     <div class="player-area-table-card-holder">
                                         <span class="number number-top"></span>
                                         <span class="number number-bottom"></span>
                                         <span class="type">
-                                            <span class="line line-1"></span>
-                                            <span class="line line-2"></span>
-                                            <span class="line line-3"></span>
-                                            <span class="line line-4"></span>
                                         </span>
                                         <span class="type type-2">
-                                            <span class="line line-1"></span>
-                                            <span class="line line-2"></span>
-                                            <span class="line line-3"></span>
-                                            <span class="line line-4"></span>
                                         </span>
                                         <span class="type type-3">
-                                            <span class="line line-1"></span>
-                                            <span class="line line-2"></span>
-                                            <span class="line line-3"></span>
-                                            <span class="line line-4"></span>
                                         </span>
                                     </div>
                                 </div>
@@ -458,29 +653,15 @@ $(function(){
                                         <div class="player-area-table-card-wrapper">
                                             <div class="cardback">
                                                 <div class="cardback-child">
+                                                    <img class="card-back-svg" src="assets/icons/card-back.svg"/>
                                                 </div>
                                             </div>
                                             <div class="player-area-table-card-holder" data-card-type="${item.type}" data-card-number="${item.number}" data-card-weight="${item.weight}">
                                                 <span class="number number-top">${_number}</span>
                                                 <span class="number number-bottom">${_number}</span>
-                                                <span class="type">
-                                                    <span class="line line-1"></span>
-                                                    <span class="line line-2"></span>
-                                                    <span class="line line-3"></span>
-                                                    <span class="line line-4"></span>
-                                                </span>
-                                                <span class="type type-2">
-                                                    <span class="line line-1"></span>
-                                                    <span class="line line-2"></span>
-                                                    <span class="line line-3"></span>
-                                                    <span class="line line-4"></span>
-                                                </span>
-                                                <span class="type type-3">
-                                                    <span class="line line-1"></span>
-                                                    <span class="line line-2"></span>
-                                                    <span class="line line-3"></span>
-                                                    <span class="line line-4"></span>
-                                                </span>
+                                                <span class="type">${typeIcons[item.type]}</span>
+                                                <span class="type type-2">${typeIcons[item.type]}</span>
+                                                <span class="type type-3">${typeIcons[item.type]}</span>
                                             </div>
                                         </div>
                                     </div>`;
@@ -489,11 +670,10 @@ $(function(){
                     }
                     table.html(cells);
                     setCardPositions(no);
-                    if(no == 0){
+
+                    if(no == 0 && !madeSortable){
+                        madeSortable = true;
                         let axis = 'x';
-                        if(wrapper.hasClass('vertical-list')){
-                            axis = 'y';
-                        }
                         table.sortable({
                             axis: axis,
                             containment: '#app',
@@ -513,34 +693,16 @@ $(function(){
                                 }, 100)
                             },
                         });
+                        
                     }
+                    
                     setTimeout(() => {
                         table.attr('data-empty', blank ? 'true' : 'false');
                     }, serverInterval);
                 }
             }
 
-            var setCardPositions = function(no){
-                no = no ?? 0;
-                setTimeout(function(){
-                    let area = $('.player-area[data-no="'+no+'"] .player-area-table-wrapper .player-area-table');
-                    if(area.length){
-                        let wrapper = area.closest('.player-area');
-                        var left = 0;
-                        var width = 100 / 13;
-                        area.find('>.player-area-table-cell:not(.ui-sortable-helper)').each(function(){
-                            let el = $(this);
-                            if(wrapper.hasClass('vertical-list')){
-                                el.css({top:`${left}%`, left:`0px`});
-                            }
-                            else{
-                                el.css({ top:`0px`, left:`${left}%`});
-                            }
-                            left += width;
-                        })
-                    }
-                }, 0);
-            };
+            
 
             var reorderCardDoms = function(no){
                 no = no ?? 0;
@@ -561,10 +723,10 @@ $(function(){
                 // currentPlayingCards[0] = cardUnserialize(sampleSet6);
                 ownInitialCards = cardSerialize(sortCardSet(clone(currentPlayingCards[0])));
                 // console.log(`${cardSerialize(currentPlayingCards[0])},${cardSerialize(currentPlayingCards[1])},${cardSerialize(currentPlayingCards[2])},${cardSerialize(currentPlayingCards[3])}`);
-                setCardIntoTable(0);
                 setCardIntoTable(1, true);
                 setCardIntoTable(2, true);
                 setCardIntoTable(3, true);
+                setCardIntoTable(0);
             };
 
             /*
@@ -1493,6 +1655,7 @@ $(function(){
                 currentBatchNo = 0;
                 let ownResult = finalizeOwnCard();
                 if(ownResult){
+                    $('body').addClass('no-transition');
                     setCardIntoTable(1);
                     setCardIntoTable(2);
                     setCardIntoTable(3);
@@ -1514,6 +1677,7 @@ $(function(){
                         setCardPositions(player);
                     }
                     setTimeout(() => {
+                        $('body').removeClass('no-transition');
                         $('body').addClass('round-running').removeClass('round-ended round-started');
                         pickCardBatch();
                     }, 100)
@@ -1602,6 +1766,13 @@ $(function(){
         e.preventDefault();
         var el  = $(this);
         initGame();
+    });
+
+    $(window).on('load resize', function(){
+        setAllCardPositions();
+        // positionSubmitTable();
+        positionSubmittedTableCards();
+        positionWonTableCards();
     });
 
     initGame();
