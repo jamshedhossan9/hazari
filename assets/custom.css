@@ -40,11 +40,6 @@
     --player-area-height-min: calc(var(--card-height) * 3.5);
     --player-area-width-max: calc(var(--card-width) * 13);
     
-    /* --player-area-width: calc(var(--board-width-unit) * 13);
-    --player-area-height: calc(var(--board-height-unit) * 13); */
-
-    /* --player-area-height-vertical: calc(var(--board-height) - (var(--card-height) * 2));
-    --player-area-height-vertical-max: calc(var(--player-area-width) - (var(--board-inside-unit) * 4));; */
     --color-red: #e92808;
     --color-black: #362f4e;
     --card-inside-unit: calc(var(--card-width)/12);
@@ -80,6 +75,7 @@ html, body{
     
 }
 body{
+    --bg-size: clamp(30px, calc(var(--board-size-unit) * 2), 100px);
     display: flex;
     flex-wrap: wrap;
     height: 100vh;
@@ -87,10 +83,13 @@ body{
     margin: 0;
     padding: 0;
     /* font-size: 16px; */
-    font-size: clamp(12px, calc(var(--board-inside-unit) * .2), 16px);
+    font-size: clamp(12px, calc(var(--board-size-unit) * .2), 16px);
     background: #d5dde6;
-    background: rgb(184,181,233);
-    background: radial-gradient(circle, rgba(184,181,233,1) 0%, rgba(116,107,138,1) 100%);
+    background: rgb(181 192 233);
+    background: url(icons/bg.svg), radial-gradient(circle, rgb(181 192 233) 0%, rgba(68, 61, 86, 1) 100%);
+    background-repeat: repeat, no-repeat;
+    background-position: 0 0;
+    background-size: var(--bg-size) var(--bg-size), cover;
 }
 .d-none{
     display: none;
@@ -194,7 +193,7 @@ body{
     white-space: nowrap;
     font-weight: bold;
     font-size: clamp(12px, calc(var(--board-size-unit) * .3), 16px);
-    color: #312552;
+    color: #0d364d;
 }
 .identity .pic{
     --size: clamp(25px, calc(var(--board-size-unit) * 2), 80px);
@@ -203,7 +202,6 @@ body{
     height: var(--size);
     
     border-radius: 100%;
-    /* border: 2px solid; */
     overflow: hidden;
 }
 .identity .pic .svg-icon{
@@ -265,7 +263,6 @@ body{
     right: 0;
 }
 .player-area[data-no="0"] .player-info{
-    /* padding-bottom: .5rem; */
     display: flex;
     align-items: flex-end;
     width: var(--player-area-width);
@@ -324,8 +321,6 @@ body{
     width: var(--player-area-width);
     min-height: var(--card-height);
     max-width: var(--player-area-width-max);
-    /* transition: .5s ease; */
-    /* margin-top: -200px; */
 }
 .player-area.vertical-list .player-area-table{
     width: auto;
@@ -334,8 +329,6 @@ body{
     height: var(--player-area-height);
     max-height: var(--player-area-height-max);
     min-height: var(--player-area-height-min);
-    /* height: calc(var(--player-area-width) - (var(--board-inside-unit) * 4)); */
-    /* margin-top: calc((var(--board-size) * -.1)); */
 }
 .player-area-table-cell{
     position: absolute;
@@ -595,21 +588,28 @@ body.doing-review .player-area-table-cell[data-has-won="1"] .batch-no{
     top:50%;
     left: 50%;
     transform: translateX(-50%) translateY(-50%);
-    /* width: calc(var(--board-width-unit) * 6);
-    height: calc(var(--board-height-unit) * 6); */
     width: calc(var(--board-width-unit) * 10);
     height: calc(var(--board-height-unit) * 8);
-    /* min-width: calc(var(--card-width) * 3);
-    min-height: calc(var(--card-height) * 3); */
     
     z-index: -1;
-    /* opacity: 0;
-    visibility: hidden; */
     border-radius: var(--submit-table-radius);
-    /* box-shadow: 0 -11px 15px -7px #fff3,0 -24px 38px 3px #ffffff24,0 -9px 46px 8px #ffffff1f; */
     box-shadow: 0 -11px 15px -7px rgba(0, 0, 0, 0.2),0 -24px 38px 3px #00000024, 0 24px 38px 3px #00000024,0 -9px 46px 8px #0000001f;
     background: rgb(196 193 241);
     background: radial-gradient(circle, rgb(196 193 241) 0%, rgb(145 132 179) 100%);
+    
+}
+.submit-table:before{
+    content: "";
+    position: absolute;
+    left: -2px;
+    top: -2px;
+    bottom: -2px;
+    right: -2px;
+    border-radius: var(--submit-table-radius);
+    background: url('icons/table-bg.svg');
+    background-repeat: repeat;
+    background-size: clamp(30px, calc(var(--board-size-unit) * 4), 200px) auto;
+    opacity: .05;
 }
 .submit-table:after{
     content: "";
@@ -619,33 +619,43 @@ body.doing-review .player-area-table-cell[data-has-won="1"] .batch-no{
     bottom: -2px;
     right: -2px;
     border-radius: var(--submit-table-radius);
-    border: calc(var(--board-size-unit) * .3) solid #645c79;
+    border: calc(var(--board-size-unit) * .3) solid #70648e;
+    z-index: 2;
 }
 .submit-table-child{
     position: absolute;
     top:50%;
     left: 50%;
     transform: translateX(-50%) translateY(-50%);
-    /* border: 1px solid; */
     width: calc(var(--card-width) * 2);
     height: calc(var(--card-height) * 1);
     min-width: 50%;
     min-height: 50%;
-    /* max-width: 100%; */
-    /* max-height: 100%; */
-    /* min-width: calc(var(--card-width) * 6);
-    min-height: calc(var(--card-height) * 3); */
     border-radius: var(--submit-table-radius);
-    background: rgb(195 193 237 / 75%);
-    background: radial-gradient(circle, rgb(195 193 237 / 75%) 0%, rgb(145 132 179 / 65%) 100%);
-    box-shadow: 0px 0px 50px rgba(0,0,0,.05);
+    background: rgb(199 197 234);
+    background: radial-gradient(circle, rgb(199 197 234) 0%, rgb(164 158 204) 100%);
+    box-shadow: 0px 0px 50px -5px rgba(255,255,255,.2);
+    z-index: 3;
+    
+}
+.submit-table-child:before{
+    content: "";
+    position: absolute;
+    left:0; top:0;bottom:0;right:0;
+    border-radius: var(--submit-table-radius);
+    background: url('icons/table-bg-2.svg');
+    background-repeat: repeat;
+    background-size: clamp(30px, calc(var(--board-size-unit) * 7), 200px) auto;
+    opacity: .15;
+    z-index: 4;
 }
 .submit-table-child:after{
     content: "";
     position: absolute;
     left:0; top:0;bottom:0;right:0;
     border-radius: var(--submit-table-radius);
-    border: calc(var(--board-size-unit)* .3) solid rgb(100 92 121 / 15%)
+    border: calc(var(--board-size-unit)* .1) solid rgb(140 134 184);
+    z-index: 5;
 }
 
 .submit-table-child .card-set .card{
@@ -654,7 +664,6 @@ body.doing-review .player-area-table-cell[data-has-won="1"] .batch-no{
     left: 0;
     height: var(--card-height);
     width:var(--card-width);
-    /* border: 1px solid; */
 }
 .submit-table-child .card-set .card.card-0{
     transform: translateX(calc(var(--card-width) * -0.8)) translateY(calc(var(--card-height) * .07)) rotate(-25deg)
@@ -672,7 +681,6 @@ body.doing-review .player-area-table-cell[data-has-won="1"] .batch-no{
     display: block;
     position: absolute;
     height: var(--card-height);
-    /* border: 1px solid; */
     width: var(--card-width);
 }
 .submit-table-child .card-set-0{
@@ -843,7 +851,6 @@ body:not(.round-started) .player-area-table{
     position: absolute;
     width: calc(var(--card-width) * 2);
     height: calc(var(--card-width) * 2);
-    /* border: 1px solid; */
     border-radius: 100%;
     z-index: 2;
     opacity: .1;
@@ -896,12 +903,6 @@ body:not(.round-started) .player-area-table{
     left: calc(var(--card-inside-unit) * 1);
     right: calc(var(--card-inside-unit) * 1);
     bottom: calc(var(--card-inside-unit) * 1);
-    /* border-radius: var(--card-radius); */
-    /* box-shadow: 0px 0px calc(var(--card-inside-unit) * 1) rgba(0,0,0,.3) inset;
-    background-image: linear-gradient(45deg, var(--grid-color-1) 25%, var(--grid-color-0) 25%), linear-gradient(-45deg, var(--grid-color-1) 25%, var(--grid-color-0) 25%), linear-gradient(45deg, var(--grid-color-0) 75%, var(--grid-color-1) 75%), linear-gradient(-45deg, var(--grid-color-2) 75%, var(--grid-color-1) 75%);
-    background-size: var(--grid-size) var(--grid-size);
-    background-position: 0 0, 0 var(--grid-position), var(--grid-position) var(--grid-position-neg), var(--grid-position-neg) 0px; */
-    /* background: linear-gradient(90deg, rgba(254,254,246,1) 0%, rgba(245,238,251,1) 50%, rgba(254,254,246,1) 100%); */
 }
 .player-area-table-cell .cardback .cardback-child:after{
     content: "";
@@ -910,7 +911,6 @@ body:not(.round-started) .player-area-table{
     height: 150%;
     top: -15%;
     left: 19%;
-    /* border: 1px solid; */
     transform: rotate(-29deg);
     opacity: .1;
     background: linear-gradient(90deg, rgba(89, 89, 78, 0) 0%, rgba(255, 255, 255, 0.78) 51%, rgba(127, 127, 117, 0) 100%);

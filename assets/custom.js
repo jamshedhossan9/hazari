@@ -11,7 +11,6 @@ $(function(){
             </g>
         </svg>`;
     var diamondIcon = `<svg class="svg-icon" width="800px" height="800px" viewBox="0 -0.5 17 17" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
-            <title>821</title>
             <defs></defs>
             <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                 <path style="fill:currentColor" d="M7.92950166,15.644 L3.34050166,8.796 C2.88750166,8.342 2.88650166,7.608 3.33750166,7.155 L7.90350166,0.323 C8.35450166,-0.13 9.08950166,-0.128 9.54550166,0.325 L14.0865017,7.175 C14.5405017,7.628 14.5415017,8.363 14.0895017,8.816 L9.57150166,15.646 C9.57150166,15.646 8.38450166,16.097 7.92950166,15.644 Z" class="si-glyph-fill"></path>
@@ -72,103 +71,14 @@ $(function(){
         return JSON.parse(JSON.stringify(obj ?? null));
     };
 
-    var positionSubmittedTableCards_old = function(){
-        let players = [0,1,2,3];
-        let centerTable = $('.submit-table');
-        let centerArea = centerTable.get(0).getBoundingClientRect();
-        for(let player of players){
-            let playerTable = $(`.player-area[data-no="${player}"] .player-area-table`);
-            let cards = $(`.player-area[data-no="${player}"] .player-area-table-cell.turn-to-board:not(.withdrawn-from-board):not(.returned-to-winner)`);
-            let cardWidth = cards.first().width();
-            let cardHeight = cards.first().height();
-            let playerTableArea = playerTable.get(0).getBoundingClientRect();
-            if(player == 0 || player == 2){
-                let lefts = [];
-                let top = 0;
-                if(player == 0){
-                    top = ((playerTableArea.top - centerArea.bottom) + (cardHeight * 1)) * (-1);
-                }
-                else{
-                    top = ((centerArea.top - playerTableArea.top) + (cardHeight * 0)) * (1);
-                }
-                if(cards.length == 3){
-                    lefts = [0,0,0];
-                    lefts[1] = (centerArea.left - playerTableArea.left) + ((centerArea.width/2) - (cardWidth/2));
-                    lefts[0] = lefts[1] - cardWidth - 5;
-                    lefts[2] = lefts[1] + cardWidth + 5;
-                }
-                if(cards.length == 4){
-                    lefts = [0,0,0,0];
-                    lefts[1] = (centerArea.left - playerTableArea.left) + ((centerArea.width/2) - (cardWidth)) - 2;
-                    lefts[0] = lefts[1] - cardWidth - 4;
-                    lefts[2] = lefts[1] + cardWidth + 4;
-                    lefts[3] = lefts[2] + cardWidth + 4;
-                }
-                cards.each(function(){
-                    let el = $(this);
-                    let serial = _parseInt(el.attr('data-card-serial'));
-                    el.addClass('turned-to-board').css({left:`${lefts[serial]}px`, top:`${top}px`});
-                });
-            }
-            else{
-                let lefts = [];
-                let top = 0;
-                top = ((centerArea.top - playerTableArea.top) + (centerArea.height/2) - (cardHeight/2)) * (1);
-                if(cards.length == 3){
-                    lefts = [0,0,0];
-                    if(player == 1){
-                        lefts[1] = (centerArea.left - playerTableArea.left) - (cardWidth/2);
-                        lefts[0] = lefts[1] - cardWidth - 5;
-                        lefts[2] = lefts[1] + cardWidth + 5;
-                    }
-                    else{
-                        lefts[1] = (centerArea.right - playerTableArea.left) - (cardWidth/2);
-                        lefts[0] = lefts[1] - cardWidth - 5;
-                        lefts[2] = lefts[1] + cardWidth + 5;
-                    }
-                }
-                if(cards.length == 4){
-                    lefts = [0,0,0,0];
-                    let tempCardWidth = cardWidth * .75;
-                    if(player == 1){
-                        lefts[1] = (centerArea.left - playerTableArea.left) - (cardWidth/2) - 2;
-                        lefts[0] = lefts[1] - tempCardWidth - 4;
-                        lefts[2] = lefts[1] + tempCardWidth + 4;
-                        lefts[3] = lefts[2] + tempCardWidth + 4;
-                    }
-                    else{
-                        lefts[2] = (centerArea.right - playerTableArea.left) - (cardWidth/2) - 2;
-                        lefts[1] = lefts[2] - tempCardWidth - 4;
-                        lefts[0] = lefts[1] - tempCardWidth - 4;
-                        lefts[3] = lefts[2] + tempCardWidth + 4;
-                    }
-                }
-                cards.each(function(){
-                    let el = $(this);
-                    let serial = _parseInt(el.attr('data-card-serial'));
-                    el.addClass('turned-to-board').css({left:`${lefts[serial]}px`, top:`${top}px`});
-                });
-            }
-        }
-    };
-
     var positionSubmittedTableCards = function(){
         let players = [0,1,2,3];
         let centerTable = $('.submit-table');
-        let centerArea = centerTable.get(0).getBoundingClientRect();
         for(let player of players){
             let playerTable = $(`.player-area[data-no="${player}"] .player-area-table`);
             let cardPosition = $(`.submit-table .card-set-${player} .card-2`).get(0).getBoundingClientRect();
             let cards = $(`.player-area[data-no="${player}"] .player-area-table-cell.turn-to-board:not(.withdrawn-from-board):not(.returned-to-winner)`);
-            let cardWidth = cards.first().width();
-            let cardHeight = cards.first().height();
             let playerTableArea = playerTable.get(0).getBoundingClientRect();
-            // let _transform = [
-            //     `translateX(calc(var(--card-width) * -0.8)) translateY(calc(var(--card-height) * .07)) rotate(-25deg)`,
-            //     `translateX(calc(var(--card-width) * -0.4)) translateY(calc(var(--card-height) * .01)) rotate(-10deg)`,
-            //     `translateX(0) translateY(0) rotate(0deg)`,
-            //     `translateX(calc(var(--card-width) * 0.4)) translateY(calc(var(--card-height) * .01)) rotate(10deg)`,
-            // ];
             let _transform = [
                 `translateX(calc(var(--card-width) * -0.8)) translateY(calc(var(--card-height) * .15)) rotate(-17deg)`,
                 `translateX(calc(var(--card-width) * -0.4)) translateY(calc(var(--card-height) * .04)) rotate(-5deg)`,
@@ -231,69 +141,6 @@ $(function(){
             }
             el.addClass('returned-to-winner').css({left: `${left}px`, top: `${top}px`, transform: `translateX(0) translateY(0) rotate(0deg)`});
         });
-    };
-
-    var positionPlayerAreaTable = function(){
-        return;
-        // setTimeout(() => {
-            // $('body').addClass('no-transition');
-            var tables = $('.player-area .player-area-table');
-            tables.each(function(){
-                let el = $(this);
-                let area = el.closest('.player-area');
-                let no = _parseInt(area.attr('data-no'))
-                // console.log(area.get(0).className)
-                if(area.hasClass('vertical-list')){
-                    let lastCard = el.find('.player-area-table-cell:last-child');
-                    if(lastCard.length){
-                        let tableArea = el.get(0).getBoundingClientRect();
-                        let lastCardArea = lastCard.get(0).getBoundingClientRect();
-                        let margin = (tableArea.bottom - lastCardArea.bottom) / 1;
-                        // console.log('top', tableArea.bottom - lastCardArea.bottom)
-                        el.css({'margin-top': `${margin}px`});
-                    }
-                }
-                else{
-                    let lastCard = el.find('.player-area-table-cell:last-child');
-                    if(lastCard.length){
-                        let tableArea = el.get(0).getBoundingClientRect();
-                        let lastCardArea = lastCard.get(0).getBoundingClientRect();
-                        let margin = (tableArea.right - lastCardArea.right) / 1;
-                        // console.log('left', tableArea.right - lastCardArea.right)
-                        el.css({'margin-left': `${margin}px`});
-                    }
-                }
-                if(no == 0 && !madeSortable){
-                    madeSortable = true;
-                    let axis = 'x';
-                    // el.sortable({
-                    //     axis: axis,
-                    //     containment: '#app',
-                    //     create: function(e, ui){
-                    //         positionPlayerAreaTable();
-                    //     },
-                    //     start: function(e, ui){
-                    //         ui.item.addClass('sorting-element');
-                    //         setCardPositions(no)
-                    //     },
-                    //     sort: function(e, ui){
-                    //         setCardPositions(no)
-                    //     },
-                    //     stop: function(e, ui){
-                    //         let leftInPercent = (ui.position.left / ui.item.parent().width()) * 100;
-                    //         ui.item.css({left:`${leftInPercent}%`})
-                    //         setTimeout(function(){
-                    //             ui.item.removeClass('sorting-element');
-                    //             setCardPositions(no, true)
-                    //         }, 100)
-                    //     },
-                    // });
-                    
-                }
-            });
-            // $('body').removeClass('no-transition');
-        // }, 0);
-        positionSubmitTable();
     };
 
     var setCardPositions = function(no){
@@ -635,7 +482,7 @@ $(function(){
                                     <div class="player-area-table-card-holder">
                                         <span class="number number-top"></span>
                                         <span class="number number-bottom"></span>
-                                        <span class="type">
+                                        <span class="type type-1">
                                         </span>
                                         <span class="type type-2">
                                         </span>
@@ -660,7 +507,7 @@ $(function(){
                                             <div class="player-area-table-card-holder" data-card-type="${item.type}" data-card-number="${item.number}" data-card-weight="${item.weight}">
                                                 <span class="number number-top">${_number}</span>
                                                 <span class="number number-bottom">${_number}</span>
-                                                <span class="type">${typeIcons[item.type]}</span>
+                                                <span class="type type-1">${typeIcons[item.type]}</span>
                                                 <span class="type type-2">${typeIcons[item.type]}</span>
                                                 <span class="type type-3">${typeIcons[item.type]}</span>
                                             </div>
@@ -670,16 +517,14 @@ $(function(){
                                 existingCell.attr('data-card-type', item.type);
                                 existingCell.attr('data-card-number', item.number);
                                 existingCell.attr('data-card-weight', item.weight);
-                                // existingCell.find('.player-area-table-card-holder').remove();
-                                existingCell.find(`.player-area-table-card-holder`).replaceWith(`
-                                        <div class="player-area-table-card-holder" data-card-type="${item.type}" data-card-number="${item.number}" data-card-weight="${item.weight}">
-                                            <span class="number number-top">${_number}</span>
-                                            <span class="number number-bottom">${_number}</span>
-                                            <span class="type">${typeIcons[item.type]}</span>
-                                            <span class="type type-2">${typeIcons[item.type]}</span>
-                                            <span class="type type-3">${typeIcons[item.type]}</span>
-                                        </div>
-                                    `);
+                                existingCell.find('.player-area-table-card-holder').attr('data-card-type', item.type);
+                                existingCell.find('.player-area-table-card-holder').attr('data-card-number', item.number);
+                                existingCell.find('.player-area-table-card-holder').attr('data-card-weight', item.weight);
+                                existingCell.find('.player-area-table-card-holder .number-top').html(`${_number}`);
+                                existingCell.find('.player-area-table-card-holder .number-bottom').html(`${_number}`);
+                                existingCell.find('.player-area-table-card-holder .type-1').html(`${typeIcons[item.type]}`);
+                                existingCell.find('.player-area-table-card-holder .type-2').html(`${typeIcons[item.type]}`);
+                                existingCell.find('.player-area-table-card-holder .type-3').html(`${typeIcons[item.type]}`);
 
                             }
                             else{
@@ -688,7 +533,9 @@ $(function(){
                         }
                         i++;
                     }
-                    table.append(cells);
+                    if(cells){
+                        table.append(cells);
+                    }
                     setCardPositions(no);
 
                     if(no == 0 && !madeSortable){
@@ -718,8 +565,6 @@ $(function(){
                     
                 }
             }
-
-            
 
             var reorderCardDoms = function(no){
                 no = no ?? 0;
@@ -1672,7 +1517,7 @@ $(function(){
                 currentBatchNo = 0;
                 let ownResult = finalizeOwnCard();
                 if(ownResult){
-                    $('body').addClass('no-transition');
+                    // $('body').addClass('no-transition');
                     setCardIntoTable(1);
                     setCardIntoTable(2);
                     setCardIntoTable(3);
@@ -1694,10 +1539,10 @@ $(function(){
                         setCardPositions(player);
                     }
                     setTimeout(() => {
-                        $('body').removeClass('no-transition');
+                        // $('body').removeClass('no-transition');
                         $('body').addClass('round-running').removeClass('round-ended round-started');
                         pickCardBatch();
-                    }, 100)
+                    }, 500)
                 }
             };
 
