@@ -101,10 +101,11 @@ body{
 }
 .bg-1, .bg-2{
     position: fixed;
-    height: 100%;
-    left:0;
-    right: 0;
-    bottom: 0;
+    width: 200%;
+    height: 200%;
+    left: -50%;
+    right: -50%;
+    bottom: -50%;
     transition: .5s ease;
 }
 .bg-1{
