@@ -90,8 +90,8 @@ body{
     position: fixed;
     top:0;
     left:0;
-    right:0;
-    bottom:0;
+    right: 0;
+    bottom: 0;
 }
 .bg-1{
     background: radial-gradient(circle, rgb(181 192 233) 0%, rgba(68, 61, 86, 1) 100%);
@@ -156,7 +156,10 @@ body{
     text-align: center;
 }
 #app{
-    width: var(--app-width);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
     /* height: var(--app-height); */
     height: 100vh;
     /* padding: 1rem; */
@@ -730,6 +733,7 @@ body.doing-review .player-area-table-cell[data-has-won="1"] .batch-no{
     align-items: center;
     overflow-y: auto;
     padding: 1rem;
+    z-index: 5;
 }
 .modal.show{
     display: flex;
