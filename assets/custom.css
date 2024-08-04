@@ -79,17 +79,21 @@ body{
     --shadow-size-2: clamp(100px, calc(var(--board-size-unit) * 10), 500px);
     --shadow-size-3: clamp(150px, calc(var(--board-size-unit) * 14), 700px);
     
-    
+    height: 100vh;
     display: flex;
     flex-wrap: wrap;
-    height: 100vh;
     justify-content: center;
     margin: 0;
     padding: 0;
     /* font-size: 16px; */
     font-size: clamp(12px, calc(var(--board-size-unit) * .2), 16px);
     /* background: #d5dde6; */
-
+    /* overflow: hidden; */
+    /* box-shadow: 0px 0px 20px green inset; */
+    background-color: rgb(135 146 187);
+    background: url(icons/bg.svg), radial-gradient(circle, rgb(181 192 233) 0%, rgba(68, 61, 86, 1) 100%); 
+    background-repeat: repeat, repeat;
+    background-size: var(--bg-size) var(--bg-size), auto auto;
     /* background-color: rgb(135 146 187);
     background-image: url(icons/bg.svg);
     background-repeat: repeat;
@@ -98,15 +102,19 @@ body{
     box-shadow: 0px 0px var(--shadow-size-1) 20px rgba(68, 61, 86, 1) inset, 
                 0px 0px var(--shadow-size-2) 20px rgba(68, 61, 86, 1) inset, 
                 0px 0px var(--shadow-size-3) 20px rgba(68, 61, 86, 1) inset; */
+    
+    /* background: url(icons/body-bg.svg);
+    background-repeat: no-repeat;
+    background-position: 0 0;
+    background-size: 100vw 100vh; */
 }
-.bg-1, .bg-2{
-    position: fixed;
-    width: 200%;
-    height: 200%;
-    left: -50%;
-    right: -50%;
-    bottom: -50%;
-    transition: .5s ease;
+/* .bg-1, .bg-2{
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    left: 0%;
+    right: 0%;
+    bottom: 0%;
 }
 .bg-1{
     background: radial-gradient(circle, rgb(181 192 233) 0%, rgba(68, 61, 86, 1) 100%);
@@ -118,7 +126,7 @@ body{
     background-repeat: repeat;
     background-position: 0 0, 0 0;
     background-size: var(--bg-size) var(--bg-size);
-}
+} */
 .d-none{
     display: none;
 }
@@ -171,9 +179,6 @@ body{
     text-align: center;
 }
 #app{
-    position: fixed;
-    top: 0;
-    left: 0;
     width: 100vw;
     /* width: var(--app-width); */
     /* height: var(--app-height); */
@@ -182,12 +187,17 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 3;
+    /* z-index: 3; */
+    /* transition: .5s ease; */
+    /* border: 1px solid red;
+    box-shadow: 0px 0px 10px red inset; */
+    /* background: radial-gradient(circle, rgb(181 192 233) 0%, rgba(68, 61, 86, 1) 100%); */
 }
 .board{
     position: relative;
     width: var(--board-width);
     height: var(--board-height);
+    /* transition: .5s ease; */
 }
 .control-btn{
     display: flex;
