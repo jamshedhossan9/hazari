@@ -90,21 +90,22 @@ body{
     font-size: clamp(12px, calc(var(--board-size-unit) * .2), 16px);
     /* background: #d5dde6; */
 
-    background-color: rgb(135 146 187);
+    /* background-color: rgb(135 146 187);
     background-image: url(icons/bg.svg);
     background-repeat: repeat;
     background-position: 0 0, 0 0;
     background-size: var(--bg-size) var(--bg-size);
     box-shadow: 0px 0px var(--shadow-size-1) 20px rgba(68, 61, 86, 1) inset, 
                 0px 0px var(--shadow-size-2) 20px rgba(68, 61, 86, 1) inset, 
-                0px 0px var(--shadow-size-3) 20px rgba(68, 61, 86, 1) inset;
+                0px 0px var(--shadow-size-3) 20px rgba(68, 61, 86, 1) inset; */
 }
-/* .bg-1, .bg-2{
+.bg-1, .bg-2{
     position: fixed;
-    top:0;
+    height: 100%;
     left:0;
     right: 0;
     bottom: 0;
+    transition: .5s ease;
 }
 .bg-1{
     background: radial-gradient(circle, rgb(181 192 233) 0%, rgba(68, 61, 86, 1) 100%);
@@ -116,7 +117,7 @@ body{
     background-repeat: repeat;
     background-position: 0 0, 0 0;
     background-size: var(--bg-size) var(--bg-size);
-} */
+}
 .d-none{
     display: none;
 }
@@ -169,11 +170,11 @@ body{
     text-align: center;
 }
 #app{
-    /* position: fixed;
+    position: fixed;
     top: 0;
     left: 0;
-    width: 100vw; */
-    width: var(--app-width);
+    width: 100vw;
+    /* width: var(--app-width); */
     /* height: var(--app-height); */
     height: 100vh;
     /* padding: 1rem; */
