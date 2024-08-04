@@ -88,8 +88,8 @@ body{
     background: rgb(181 192 233);
     background: url(icons/bg.svg), radial-gradient(circle, rgb(181 192 233) 0%, rgba(68, 61, 86, 1) 100%);
     background-repeat: repeat, no-repeat;
-    background-position: 0 0;
-    background-size: var(--bg-size) var(--bg-size), auto;
+    background-position: 0 0, 0 0;
+    background-size: var(--bg-size) var(--bg-size), 100% 100%;
 }
 .d-none{
     display: none;
