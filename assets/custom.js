@@ -143,7 +143,7 @@ $(function(){
         });
     };
 
-    var setCardPositions = function(no){
+    var setCardPositions = function(no, callback){
         no = no ?? 0;
         setTimeout(function(){
             let area = $('.player-area[data-no="'+no+'"] .player-area-table-wrapper .player-area-table');
@@ -180,6 +180,9 @@ $(function(){
                     left += width;
                 })
             }
+            if(typeof callback === "function"){
+                callback();
+            }
         }, 0);
     };
 
@@ -212,7 +215,8 @@ $(function(){
             frequency = .05, 
             serverInterval = frequency * 15, 
             waitAfterSubRound = frequency * 60, 
-            waitAfterRound = frequency * 10; // seconds
+            waitAfterRound = frequency * 10, // seconds
+            cardDefaultTransition = 500; // ms
 
         var setResult = function(){
             let table = $('.result-table');
@@ -250,6 +254,12 @@ $(function(){
             opts = $.extend({
                 server: 0,
             }, opts);
+
+            var useSample = 0;
+            var sampleSet = [];
+            sampleSet[1] = `9H 3D 3C WH WS 6C 2S 7D 3S 5S KH QC 2H,WC KC 4S 2D 5D 4D 6S 5C 6H KD 9C 7C 3H,8H JS JD 7S AS 8D 4C AH KS 6D 9D 8C 9S,JH AC QS 4H AD JC 7H QD QH 5H WD 2C 8S`;
+            sampleSet[2] = `AD AC 6D WS QH KH 5C JC 2D 5S 5D 4H QD,WD 7C 3S 3D 9C 2C 8S JS 3C KS 2H 8D KC,7H WH 4D WC AH JD 6S KD 5H 9H 9D 4C 6H,7D 8C 3H AS 2S QS 9S 4S 7S QC JH 8H 6C`;
+            sampleSet[3] = `7D AS QS 5D 7C 4H WD 7S 3C 2C JC 9S 2H,4D 6H WH 7H WC JH 3S AC 6D KS 2S 4C 9D,3D WS JS 8D KD 2D 5S 8H 4S QD 5H 8S 9H,3H 6S JD AD 9C KC 8C KH 5C QC AH 6C QH`;
 
             var currentPlayingCards = null,
                 ownInitialCards = ``,
@@ -428,6 +438,14 @@ $(function(){
             };
 
             var generateCards = function(){
+                if(useSample){
+                    let sample = sampleSet[useSample].split(',');
+                    let cards = [];
+                    for(let [i, v] of sample.entries()){
+                        cards[i] = cardUnserialize(v);
+                    }
+                    return cards;
+                }
                 let tried = 10, cards = null;
                 while(tried){
                     let _cards = fnCardsByPlayer();
@@ -449,6 +467,14 @@ $(function(){
                 }
                 return cards;
             }
+
+            var sizeSortHandlers = function(){
+                let area = $(`.player-area[data-no="0"] .player-area-table`);
+                let items = area.find(`.player-area-table-cell:not(.sortable-chosen)`);
+                let areaReact = area.get(0).getBoundingClientRect();
+                let height = areaReact.bottom;
+                items.css({height: `${height}px`});
+            };
 
             /*
                 these methods are used to show cards properly in UI
@@ -541,23 +567,19 @@ $(function(){
                     if(no == 0 && !madeSortable){
                         madeSortable = true;
                         let axis = 'x';
+                        var dragGhost = {};
                         table.sortable({
-                            axis: axis,
-                            containment: '#app',
-                            start: function(e, ui){
-                                ui.item.addClass('sorting-element');
-                                setCardPositions(no)
+                            direction: 'horizontal',
+                            animation: 200, 
+                            easing: "cubic-bezier(1, 0, 0, 1)",
+                            dragClass: "sortable-drag",
+                            fallbackClass: "sortable-fallback",
+                            onStart: function(evt){
+                                $('body').addClass('being-menaully-sorted');
+                                sizeSortHandlers();
                             },
-                            sort: function(e, ui){
-                                setCardPositions(no)
-                            },
-                            stop: function(e, ui){
-                                let leftInPercent = (ui.position.left / ui.item.parent().width()) * 100;
-                                ui.item.css({left:`${leftInPercent}%`})
-                                setTimeout(function(){
-                                    ui.item.removeClass('sorting-element');
-                                    setCardPositions(no)
-                                }, 100)
+                            onEnd: function(evt){
+                                $('body').removeClass('being-menaully-sorted');
                             },
                         });
                         
@@ -580,15 +602,76 @@ $(function(){
                 }
             };
 
+            var listPositioningCardSetBeforeSubmit = function(setPositions){
+                let area = $('.review-modal .review-card-list');
+                let html = ``;
+                let changeTrack = ['', '', '', ''];
+                let repaired = [];
+                for(let [i,v] of setPositions.entries()){
+                    if(i == 0 || v.str !== repaired[repaired.length-1].str){
+                        repaired.push(v);
+                    }
+                }
+                repaired.push(repaired[repaired.length-1]);
+                for(let item3 of repaired){
+                    let cards = clone(item3.obj);
+                    let chunks = [];
+                    for(let i = 0; i < 4; i++){
+                        chunks.push(cards.splice(0,3));
+                    }
+                    chunks.push(cards);
+        
+                    let tempHtml = `<div class="card-row">`;
+                    let i = 0;
+                    for(let [i2, item2] of chunks.entries()){
+                        let hasChange = false;
+                        let serialize = cardSerialize(item2);
+                        if(changeTrack[i2] && serialize != changeTrack[i2]){
+                            hasChange = true;
+                        }
+                        changeTrack[i2] = serialize;
+                        let tempHtml2 = `<div class="card-column ${hasChange ? `has-change` : ``}">`;
+                        for(let item of item2){
+                            let _number = item.number == 'W' ? '10' : item.number;
+                            tempHtml2 += `
+                                <div class="player-area-table-card-holder" data-card-type="${item.type}" data-card-number="${item.number}" data-card-weight="${item.weight}">
+                                    <span class="number number-top">${_number}</span>
+                                    <span class="number number-bottom">${_number}</span>
+                                    <span class="type type-1">${typeIcons[item.type]}</span>
+                                    <span class="type type-2">${typeIcons[item.type]}</span>
+                                    <span class="type type-3">${typeIcons[item.type]}</span>
+                                </div>
+                            `;
+                            i++;
+                        }
+                        tempHtml2 += `</div>`;
+                        tempHtml += tempHtml2;
+                    }
+                    tempHtml += `</div>`;
+                    html += tempHtml;
+                }
+                area.html(html);
+            };
+
             var prepareCardTable = function(){
                 currentPlayingCards = generateCards();
                 // currentPlayingCards[0] = cardUnserialize(sampleSet6);
                 ownInitialCards = cardSerialize(sortCardSet(clone(currentPlayingCards[0])));
-                // console.log(`${cardSerialize(currentPlayingCards[0])},${cardSerialize(currentPlayingCards[1])},${cardSerialize(currentPlayingCards[2])},${cardSerialize(currentPlayingCards[3])}`);
+                console.log(`${cardSerialize(currentPlayingCards[0])},${cardSerialize(currentPlayingCards[1])},${cardSerialize(currentPlayingCards[2])},${cardSerialize(currentPlayingCards[3])}`);
                 setCardIntoTable(1, true);
                 setCardIntoTable(2, true);
                 setCardIntoTable(3, true);
                 setCardIntoTable(0);
+                setTimeout(() => {
+                    $('body').addClass('no-transition');
+                    $('body').addClass('round-started');
+                    setTimeout(() => {
+                        $('body').removeClass('before-round-started');
+                        setTimeout(() => {
+                            $('body').removeClass('no-transition');
+                        }, 100);
+                    }, 10);
+                }, cardDefaultTransition);
             };
 
             /*
@@ -619,9 +702,12 @@ $(function(){
                 server = getNextPlayer(server);
                 roundEnded = true;
                 setResult();
-                $('body').addClass('round-ended').removeClass('round-started round-running');
+                $('body').addClass('round-ended no-transition').removeClass('round-started round-running');
                 let modal = $('.result-modal');
-                showModal(modal);
+                setTimeout(() => {
+                    $('body').removeClass('no-transition')
+                    showModal(modal);
+                }, serverInterval * 1000)
             };
 
             var finalizeOwnCard = function(){
@@ -635,27 +721,53 @@ $(function(){
                 let verifyCards = cardSerialize(sortCardSet(clone(cards)));
                 let verified = verifyCards == ownInitialCards;
                 if(verified){
+                    let setPositions = [];
+                    setPositions.push({
+                        obj: clone(cards),
+                        str: cardSerialize(cards),
+                    });
                     reviewCardsAll[0] = clone(cards);
                     let chunks = [];
                     for(let i = 0; i < 3; i++){
                         chunks.push(cards.splice(0,3));
                     }
                     chunks.push(cards);
+
+                    function addResultIntoSetPos(data){
+                        let tempNewCards = [];
+                        for(let item of data){
+                            tempNewCards = [...tempNewCards, ...item.result];
+                        }
+                        setPositions.push({
+                            obj: tempNewCards,
+                            str: cardSerialize(tempNewCards),
+                        });
+                    }
+                    
                     let result = [];
                     for(let item of chunks){
                         let temp = getBestResult(item);
                         result = [...result, ...temp];
                     }
+                    addResultIntoSetPos(result);
                     result = sortFinalResultSet(result);
+                    addResultIntoSetPos(result);
+                    console.log(clone(result))
                     while(true){
                         let lastSet = [...result[3].result, ...result[4].result];
                         let lastResult = getBestResult(lastSet);
                         if(lastResult[0].level > result[2].level || (lastResult[0].level == result[2].level && lastResult[0].weight > result[2].weight)){
                             result[3] = lastResult[0];
                             result[4] = lastResult[1];
+                            addResultIntoSetPos(result);
                             result = sortFinalResultSet(result);
+                            addResultIntoSetPos(result);
                         }
                         else{
+                            addResultIntoSetPos(result);
+                            result[3] = lastResult[0];
+                            result[4] = lastResult[1];
+                            addResultIntoSetPos(result);
                             break;
                         }
                     }
@@ -664,6 +776,11 @@ $(function(){
                         newCards = [...newCards, ...item.result];
                     }
                     finalResult = result;
+                    console.log(setPositions);
+                    for(let item of setPositions){
+                        console.log(item.str);
+                    }
+                    listPositioningCardSetBeforeSubmit(setPositions);
                 }
                 else{
                     alert('Sorry, it seems cards were tempered');
@@ -804,7 +921,7 @@ $(function(){
                             
                         }, serverInterval * 1000);
                     }, serverInterval * 1000);
-                }, serverInterval * 1000);
+                }, 100); //  serverInterval * 1000
                 return currentSendBatch;
             }
 
@@ -1491,9 +1608,24 @@ $(function(){
             var sortHandler = function(e){
                 e.preventDefault();
                 var el  = $(this);
-                currentPlayingCards[0] = sortCardSet(currentPlayingCards[0]);
-                reorderCardDoms(0);
+                $('body').addClass('no-transition');
                 setCardPositions(0);
+                $('body').addClass('auto-sorting-card');
+                setTimeout(() => {
+                    $('body').removeClass('no-transition');
+                    currentPlayingCards[0] = sortCardSet(currentPlayingCards[0]);
+                    reorderCardDoms(0);
+                    setCardPositions(0, function(){
+                        setTimeout(() => {
+                            $('body').addClass('no-transition');
+                            $('body').removeClass('auto-sorting-card');
+                            setTimeout(() => {
+                                $('body').removeClass('no-transition');
+                            }, 100);
+                        }, cardDefaultTransition);
+                    });
+                }, 10);
+                
             };
 
             var makeHandler = function (e){
@@ -1517,7 +1649,7 @@ $(function(){
                 currentBatchNo = 0;
                 let ownResult = finalizeOwnCard();
                 if(ownResult){
-                    // $('body').addClass('no-transition');
+                    
                     setCardIntoTable(1);
                     setCardIntoTable(2);
                     setCardIntoTable(3);
@@ -1539,10 +1671,21 @@ $(function(){
                         setCardPositions(player);
                     }
                     setTimeout(() => {
-                        // $('body').removeClass('no-transition');
-                        $('body').addClass('round-running').removeClass('round-ended round-started');
-                        pickCardBatch();
-                    }, 500)
+                        $('body').addClass('no-transition');
+                        setCardPositions(0, function(){
+                            setTimeout(() => {
+                                $('body').addClass('round-running')
+                                $('body').removeClass('round-started');
+                                $('body').removeClass('round-started');
+                                setTimeout(() => {
+                                    $('body').removeClass('no-transition');
+                                    pickCardBatch();
+                                }, 100);
+                            }, 100);
+                        });
+                        
+                        
+                    }, cardDefaultTransition)
                 }
             };
 
@@ -1590,6 +1733,12 @@ $(function(){
                 resultHideHandler(e);
             };
 
+            var checkSetSeqHandler = function(e){
+                e.preventDefault();
+                reviewHandler(e);
+                showModal('.review-modal');
+            };
+
             if(gameNumber > 1){
                 $(document).off('click.game', '.sort-btn');
                 $(document).off('click.game', '.make-btn');
@@ -1598,6 +1747,7 @@ $(function(){
                 $(document).off('click.game', '.result-modal .modal-close-btn');
                 $(document).off('click.game', '.result-modal .review-btn');
                 $(document).off('click.game', '.review-done-btn');
+                $(document).off('click.game', '.check-set-seq-btn');
             }
             $(document).on('click.game', '.sort-btn', sortHandler);
             $(document).on('click.game', '.make-btn', makeHandler);
@@ -1606,9 +1756,10 @@ $(function(){
             $(document).on('click.game', '.result-modal .modal-close-btn', resultHideHandler);
             $(document).on('click.game', '.result-modal .review-btn', reviewHandler);
             $(document).on('click.game', '.review-done-btn', reviewDoneHandler);
+            $(document).on('click.game', '.check-set-seq-btn', checkSetSeqHandler);
             
             $('.player-area .player-area-table').remove();
-            $('body').addClass('round-started').removeClass('round-ended round-running doing-review');
+            $('body').addClass('before-round-started').removeClass('round-ended round-running doing-review');
             
             initCards();
             prepareCardTable();
